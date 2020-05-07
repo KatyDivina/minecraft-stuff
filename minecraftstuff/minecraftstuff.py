@@ -265,7 +265,16 @@ class MinecraftDrawing:
                             x ** 2 + y ** 2 + z ** 2 > (radius ** 2 - (radius * 2))):
                         self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
 
-    def drawTopHollowSphere(selfself, x1, y1, z1, radius, blockType, blockData=0):)
+    def drawTopHollowSphere(self, x1, y1, z1, radius, blockType, blockData=0):
+        """
+     .
+        """
+        for x in range(radius * -1, radius):
+            for y in range(0, radius):
+                for z in range(radius * -1, radius):
+                    if (x ** 2 + y ** 2 + z ** 2 < radius ** 2) and (
+                            x ** 2 + y ** 2 + z ** 2 > (radius ** 2 - (radius * 2))):
+                        self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
 
     def drawCircleX(self, x, y0, z0, radius, blockType, blockData=0):
         """
@@ -417,7 +426,94 @@ class MinecraftDrawing:
             self.drawPoint3d(x0 + y, y0 - x, z, blockType, blockData)
             self.drawPoint3d(x0 - y, y0 - x, z, blockType, blockData)
 
+    def getCircleX(self, x, y0, z0, radius):
+        points = []
+        f = 1 - radius
+        ddf_z = 1
+        ddf_y = -2 * radius
+        z = 0
+        y = radius
+        points.append((x, y0 + radius, z0))
+        points.append((x, y0 - radius, z0))
+        points.append((x, y0, z0 + radius))
+        points.append((x, y0, z0 - radius))
 
+        while z < y:
+            if f >= 0:
+                y -= 1
+                ddf_y += 2
+                f += ddf_y
+            z += 1
+            ddf_z += 2
+            f += ddf_z
+            points.append((x, y0 + y, z0 + z))
+            points.append((x, y0 + y, z0 - z))
+            points.append((x, y0 - y, z0 + z))
+            points.append((x, y0 - y, z0 - z))
+            points.append((x, y0 + z, z0 + y))
+            points.append((x, y0 + z, z0 - y))
+            points.append((x, y0 - z, z0 + y))
+            points.append((x, y0 - z, z0 - y))
+        return points
+
+    def getCircleY(self, x0, y, z0, radius):
+        points = []
+        f = 1 - radius
+        ddf_x = 1
+        ddf_z = -2 * radius
+        x = 0
+        z = radius
+        points.append((x0, y, z0 + radius))
+        points.append((x0, y, z0 - radius))
+        points.append((x0 + radius, y, z0))
+        points.append((x0 - radius, y, z0))
+
+        while x < z:
+            if f >= 0:
+                z -= 1
+                ddf_z += 2
+                f += ddf_z
+            x += 1
+            ddf_x += 2
+            f += ddf_x
+            points.append((x0 + x, y, z0 + z))
+            points.append((x0 - x, y, z0 + z))
+            points.append((x0 + x, y, z0 - z))
+            points.append((x0 - x, y, z0 - z))
+            points.append((x0 + z, y, z0 + x))
+            points.append((x0 - z, y, z0 + x))
+            points.append((x0 + z, y, z0 - x))
+            points.append((x0 - z, y, z0 - x))
+        return points
+
+    def getCircleZ(self, x0, y0, z, radius):
+        points = []
+        f = 1 - radius
+        ddf_x = 1
+        ddf_y = -2 * radius
+        x = 0
+        y = radius
+        points.append(x0, y0 + radius, z, blockType, blockData)
+        points.append(x0, y0 - radius, z, blockType, blockData)
+        points.append(x0 + radius, y0, z, blockType, blockData)
+        points.appendself.drawPoint3d(x0 - radius, y0, z, blockType, blockData)
+
+        while x < y:
+            if f >= 0:
+                y -= 1
+                ddf_y += 2
+                f += ddf_y
+            x += 1
+            ddf_x += 2
+            f += ddf_x
+            points.append(x0 + x, y0 + y, z)
+            points.append(x0 - x, y0 + y, z)
+            points.append(x0 - x, y0 - y, z)
+            points.append(x0 + y, y0 + x, z)
+            points.append(x0 - y, y0 + x, z)
+            points.append(x0 + y, y0 - x, z)
+            points.append(x0 - y, y0 - x, z)
+        return points
 
 
     def drawCircle(self, x0, y0, z, radius, blockType, blockData=0):
@@ -470,7 +566,6 @@ class MinecraftDrawing:
             self.drawPoint3d(x0 + y, y0 - x, z, blockType, blockData)
             self.drawPoint3d(x0 - y, y0 - x, z, blockType, blockData)
 
-    
     def drawHorizontalCircle(self, x0, y, z0, radius, blockType, blockData=0):
         """
         draws a circle in the X plane (i.e. horizontally)
@@ -1443,3 +1538,23 @@ class MinecraftTurtle:
     def _roundVec3(position):
         return minecraft.vec3(int(position.x), int(position.y), int(position.z))
 
+if __name__ == "__main__":
+    mc = minecraft.Minecraft.create()
+    md = MinecraftDrawing(mc)
+    mc.postToChat("Testings")
+    radius = 10
+    blockType = 35
+    blockData = 14
+
+    x,y,z = mc.player.getTilePos()
+    md.drawCircleX(x + 10, y, z, radius, blockType, blockData-2)
+    md.drawCircleY(x + 10, y, z, radius, blockType, blockData)
+    md.drawCircleZ(x + 10, y, z, radius, blockType, blockData+1)
+
+    md.drawBottomHollowSphere(x+3*radius, y-3, z, radius, 35, 5)
+    md.drawTopHollowSphere(x+3*radius, y, z, radius, 35,6)
+
+    c = md.getCircleX(x, y, z+20, radius)
+    print(c)
+    for px, py, pz in c:
+        mc.setBlock(px, py, pz, blockType)
