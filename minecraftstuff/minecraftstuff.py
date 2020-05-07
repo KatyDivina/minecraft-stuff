@@ -493,10 +493,10 @@ class MinecraftDrawing:
         ddf_y = -2 * radius
         x = 0
         y = radius
-        points.append(x0, y0 + radius, z, blockType, blockData)
-        points.append(x0, y0 - radius, z, blockType, blockData)
-        points.append(x0 + radius, y0, z, blockType, blockData)
-        points.appendself.drawPoint3d(x0 - radius, y0, z, blockType, blockData)
+        points.append((x0, y0 + radius, z))
+        points.append((x0, y0 - radius, z))
+        points.append((x0 + radius, y0, z))
+        points.append((x0 - radius, y0, z))
 
         while x < y:
             if f >= 0:
@@ -506,13 +506,14 @@ class MinecraftDrawing:
             x += 1
             ddf_x += 2
             f += ddf_x
-            points.append(x0 + x, y0 + y, z)
-            points.append(x0 - x, y0 + y, z)
-            points.append(x0 - x, y0 - y, z)
-            points.append(x0 + y, y0 + x, z)
-            points.append(x0 - y, y0 + x, z)
-            points.append(x0 + y, y0 - x, z)
-            points.append(x0 - y, y0 - x, z)
+            points.append((x0 + x, y0 + y, z))
+            points.append((x0 - x, y0 + y, z))
+            points.append((x0 + x, y0 - y, z))
+            points.append((x0 - x, y0 - y, z))
+            points.append((x0 + y, y0 + x, z))
+            points.append((x0 - y, y0 + x, z))
+            points.append((x0 + y, y0 - x, z))
+            points.append((x0 - y, y0 - x, z))
         return points
 
 
@@ -1554,7 +1555,8 @@ if __name__ == "__main__":
     md.drawBottomHollowSphere(x+3*radius, y-3, z, radius, 35, 5)
     md.drawTopHollowSphere(x+3*radius, y, z, radius, 35,6)
 
-    c = md.getCircleX(x, y, z+20, radius)
+    c = md.getCircleZ(x, y, z+20, radius)
     print(c)
     for px, py, pz in c:
         mc.setBlock(px, py, pz, blockType)
+
