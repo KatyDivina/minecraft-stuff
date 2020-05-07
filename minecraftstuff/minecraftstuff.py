@@ -267,6 +267,158 @@ class MinecraftDrawing:
 
     def drawTopHollowSphere(selfself, x1, y1, z1, radius, blockType, blockData=0):)
 
+    def drawCircleX(self, x, y0, z0, radius, blockType, blockData=0):
+        """
+        draws a circle in the Y plane (i.e. vertically)
+
+        :param int x0:
+            The x position of the centre of the circle.
+
+        :param int y0:
+            The y position of the centre of the circle.
+
+        :param int z:
+            The z position of the centre of the circle.
+
+        :param int radius:
+            The radius of the sphere.
+
+        :param int blockType:
+            The block id.
+
+        :param int blockData:
+            The block data value, defaults to ``0``.
+        """
+
+        f = 1 - radius
+        ddf_z = 1
+        ddf_y = -2 * radius
+        z = 0
+        y = radius
+        self.drawPoint3d(x, y0 + radius, z0, blockType, blockData)
+        self.drawPoint3d(x, y0 - radius, z0, blockType, blockData)
+        self.drawPoint3d(x, y0, z0 + radius, blockType, blockData)
+        self.drawPoint3d(x, y0, z0 - radius, blockType, blockData)
+
+        while z < y:
+            if f >= 0:
+                y -= 1
+                ddf_y += 2
+                f += ddf_y
+            z += 1
+            ddf_z += 2
+            f += ddf_z
+            self.drawPoint3d(x, y0 + y, z0 + z, blockType, blockData)
+            self.drawPoint3d(x, y0 + y, z0 - z, blockType, blockData)
+            self.drawPoint3d(x, y0 - y, z0 + z, blockType, blockData)
+            self.drawPoint3d(x, y0 - y, z0 - z, blockType, blockData)
+            self.drawPoint3d(x, y0 + z, z0 + y, blockType, blockData)
+            self.drawPoint3d(x, y0 + z, z0 - y, blockType, blockData)
+            self.drawPoint3d(x, y0 - z, z0 + y, blockType, blockData)
+            self.drawPoint3d(x, y0 - z, z0 - y, blockType, blockData)
+
+    def drawCircleY(self, x0, y, z0, radius, blockType, blockData=0):
+        """
+        draws a circle in the X plane (i.e. horizontally)
+
+        :param int x0:
+            The x position of the centre of the circle.
+
+        :param int y:
+            The y position of the centre of the circle.
+
+        :param int z0:
+            The z position of the centre of the circle.
+
+        :param int radius:
+            The radius of the circle.
+
+        :param int blockType:
+            The block id.
+
+        :param int blockData:
+            The block data value, defaults to ``0``.
+        """
+
+        f = 1 - radius
+        ddf_x = 1
+        ddf_z = -2 * radius
+        x = 0
+        z = radius
+        self.drawPoint3d(x0, y, z0 + radius, blockType, blockData)
+        self.drawPoint3d(x0, y, z0 - radius, blockType, blockData)
+        self.drawPoint3d(x0 + radius, y, z0, blockType, blockData)
+        self.drawPoint3d(x0 - radius, y, z0, blockType, blockData)
+
+        while x < z:
+            if f >= 0:
+                z -= 1
+                ddf_z += 2
+                f += ddf_z
+            x += 1
+            ddf_x += 2
+            f += ddf_x
+            self.drawPoint3d(x0 + x, y, z0 + z, blockType, blockData)
+            self.drawPoint3d(x0 - x, y, z0 + z, blockType, blockData)
+            self.drawPoint3d(x0 + x, y, z0 - z, blockType, blockData)
+            self.drawPoint3d(x0 - x, y, z0 - z, blockType, blockData)
+            self.drawPoint3d(x0 + z, y, z0 + x, blockType, blockData)
+            self.drawPoint3d(x0 - z, y, z0 + x, blockType, blockData)
+            self.drawPoint3d(x0 + z, y, z0 - x, blockType, blockData)
+            self.drawPoint3d(x0 - z, y, z0 - x, blockType, blockData)
+
+    def drawCircleZ(self, x0, y0, z, radius, blockType, blockData=0):
+        """
+        draws a circle in the Y plane (i.e. vertically)
+
+        :param int x0:
+            The x position of the centre of the circle.
+
+        :param int y0:
+            The y position of the centre of the circle.
+
+        :param int z:
+            The z position of the centre of the circle.
+
+        :param int radius:
+            The radius of the sphere.
+
+        :param int blockType:
+            The block id.
+
+        :param int blockData:
+            The block data value, defaults to ``0``.
+        """
+
+        f = 1 - radius
+        ddf_x = 1
+        ddf_y = -2 * radius
+        x = 0
+        y = radius
+        self.drawPoint3d(x0, y0 + radius, z, blockType, blockData)
+        self.drawPoint3d(x0, y0 - radius, z, blockType, blockData)
+        self.drawPoint3d(x0 + radius, y0, z, blockType, blockData)
+        self.drawPoint3d(x0 - radius, y0, z, blockType, blockData)
+
+        while x < y:
+            if f >= 0:
+                y -= 1
+                ddf_y += 2
+                f += ddf_y
+            x += 1
+            ddf_x += 2
+            f += ddf_x
+            self.drawPoint3d(x0 + x, y0 + y, z, blockType, blockData)
+            self.drawPoint3d(x0 - x, y0 + y, z, blockType, blockData)
+            self.drawPoint3d(x0 + x, y0 - y, z, blockType, blockData)
+            self.drawPoint3d(x0 - x, y0 - y, z, blockType, blockData)
+            self.drawPoint3d(x0 + y, y0 + x, z, blockType, blockData)
+            self.drawPoint3d(x0 - y, y0 + x, z, blockType, blockData)
+            self.drawPoint3d(x0 + y, y0 - x, z, blockType, blockData)
+            self.drawPoint3d(x0 - y, y0 - x, z, blockType, blockData)
+
+
+
 
     def drawCircle(self, x0, y0, z, radius, blockType, blockData=0):
         """
