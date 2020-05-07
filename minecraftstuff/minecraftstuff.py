@@ -243,6 +243,31 @@ class MinecraftDrawing:
                     if (x**2 + y**2 + z**2 < radius**2) and (x**2 + y**2 + z**2 > (radius**2 - (radius * 2))):
                         self.drawPoint3d(x1 + x, y1 + y, z1 +z, blockType, blockData)
 
+    def drawTopHollowSphere(self, x1, y1, z1, radius, blockType, blockData=0):
+        """
+     .
+        """
+        for x in range(radius * -1, radius):
+            for y in range(0, radius):
+                for z in range(radius * -1, radius):
+                    if (x ** 2 + y ** 2 + z ** 2 < radius ** 2) and (
+                            x ** 2 + y ** 2 + z ** 2 > (radius ** 2 - (radius * 2))):
+                        self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
+
+    def drawBottomHollowSphere(self, x1, y1, z1, radius, blockType, blockData=0):
+        """
+     .
+        """
+        for x in range(radius * -1, radius):
+            for y in range(radius * -1, 0):
+                for z in range(radius * -1, radius):
+                    if (x ** 2 + y ** 2 + z ** 2 < radius ** 2) and (
+                            x ** 2 + y ** 2 + z ** 2 > (radius ** 2 - (radius * 2))):
+                        self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
+
+    def drawTopHollowSphere(selfself, x1, y1, z1, radius, blockType, blockData=0):)
+
+
     def drawCircle(self, x0, y0, z, radius, blockType, blockData=0):
         """
         draws a circle in the Y plane (i.e. vertically)
