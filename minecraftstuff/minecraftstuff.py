@@ -427,6 +427,7 @@ class MinecraftDrawing:
             self.drawPoint3d(x0 - y, y0 - x, z, blockType, blockData)
 
     def getCircleX(self, x, y0, z0, radius):
+        #add sorting
         points = []
         f = 1 - radius
         ddf_z = 1
@@ -457,6 +458,7 @@ class MinecraftDrawing:
         return points
 
     def getCircleY(self, x0, y, z0, radius):
+        # add sorting
         points = []
         f = 1 - radius
         ddf_x = 1
@@ -487,6 +489,7 @@ class MinecraftDrawing:
         return points
 
     def getCircleZ(self, x0, y0, z, radius):
+        # add sorting
         points = []
         f = 1 - radius
         ddf_x = 1
@@ -1245,6 +1248,7 @@ class MinecraftTurtle:
         # flying to true
         self.flying = True
         # set speed
+        self.sailplane = False
         self.turtlespeed = 6
         # create turtle
         self.showturtle = True
@@ -1288,6 +1292,10 @@ class MinecraftTurtle:
         # if walking, set target Y to be height of world
         if not self.flying:
             targetY = self.mc.getHeight(targetX, targetZ)
+            targetY += 1
+            if self.sailplane:
+                targetY += 2
+
         currentX, currentY, currentZ = int(self.position.x), int(self.position.y), int(self.position.z)
 
         # clear the turtle
@@ -1306,6 +1314,9 @@ class MinecraftTurtle:
                 # if walking update the y, to be the height of the world
                 if not self.flying:
                     blockBetween.y = self.mc.getHeight(blockBetween.x, blockBetween.z)
+                    blockBetween.y += 1
+                    if self.sailplane:
+                        blockBetween.y += 2
                 # draw the turtle
                 if self.showturtle:
                     self._drawTurtle(blockBetween.x, blockBetween.y, blockBetween.z)
@@ -1481,12 +1492,26 @@ class MinecraftTurtle:
         sets the turtle to 'fly', i.e. not have to move along the ground.
         """
         self.flying = True
+        self.sailplane = False
+
 
     def walk(self):
         """
         sets the turtle to 'walk', i.e. it has to move along the ground.
         """
+
         self.flying = False
+        self.sailplane = False
+
+        self.verticalheading = 0
+
+    def plane(self):
+        """
+        move 1 block above ground
+        """
+        self.flying = False
+        self.sailplane = True
+
         self.verticalheading = 0
 
     def penblock(self, blockId, blockData=0):
@@ -1548,15 +1573,48 @@ if __name__ == "__main__":
     blockData = 14
 
     x,y,z = mc.player.getTilePos()
-    md.drawCircleX(x + 10, y, z, radius, blockType, blockData-2)
-    md.drawCircleY(x + 10, y, z, radius, blockType, blockData)
-    md.drawCircleZ(x + 10, y, z, radius, blockType, blockData+1)
 
-    md.drawBottomHollowSphere(x+3*radius, y-3, z, radius, 35, 5)
-    md.drawTopHollowSphere(x+3*radius, y, z, radius, 35,6)
+    ###Draw circle X, Y, Z
+    #md.drawCircleX(x + 10, y, z, radius, blockType, blockData-2)
+    #md.drawCircleY(x + 10, y, z, radius, blockType, blockData)
+    #md.drawCircleZ(x + 10, y, z, radius, blockType, blockData+1)
 
-    c = md.getCircleZ(x, y, z+20, radius)
-    print(c)
-    for px, py, pz in c:
-        mc.setBlock(px, py, pz, blockType)
+    ##Top, bottom sphere
+    #md.drawBottomHollowSphere(x+3*radius, y-3, z, radius, 35, 5)
+    #md.drawTopHollowSphere(x+3*radius, y, z, radius, 35,6)
+
+    ##getCircle
+    #gx = md.getCircleX(x, y, z+20, radius)
+    #for px, py, pz in gx:
+    #    mc.setBlock(px, py, pz, blockType)
+
+    #gy = md.getCircleY(x, y, z + 20, radius)
+    #for px, py, pz in gy:
+    #    mc.setBlock(px, py, pz, blockType)
+
+    #gz = md.getCircleZ(x, y, z + 20, radius)
+    #for px, py, pz in gz:
+    #    mc.setBlock(px, py, pz, blockType)
+
+    gary = MinecraftTurtle(mc)
+    gary.setposition(x,y,z)
+
+    mc.postToChat("fly")
+    gary.fly()
+    gary.forward(10)
+
+    mc.postToChat("walk")
+    gary.walk()
+    gary.forward(10)
+
+    mc.postToChat("plane")
+    gary.plane()
+    gary.forward(10)
+
+    mc.postToChat("fly")
+    gary.fly()
+    gary.forward(10)
+
+
+
 
