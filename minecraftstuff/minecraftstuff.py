@@ -169,27 +169,15 @@ class MinecraftDrawing:
         for vertex in vertices:
             self.drawPoint3d(vertex.x, vertex.y, vertex.z, blockType, blockData)
 
-    def drawLine(self, x1, y1, z1, x2, y2, z2, blockType, blockData=0):
+    def drawLine(self, pos1, pos2,  blockType, blockData=0):
         """
         draws a line between 2 points
 
-        :param int x1:
-            The x position of the first point.
+         :param tuple pos1:
+            The first point.
 
-        :param int y1:
-            The y position of the first point.
-
-        :param int z1:
-            The z position of the first point.
-
-        :param int x2:
-            The x position of the second point.
-
-        :param int y2:
-            The y position of the second point.
-
-        :param int z2:
-            The z position of the second point.
+        :param tuple pos2:
+            The second point.
 
         :param int blockType:
             The block id.
@@ -197,6 +185,8 @@ class MinecraftDrawing:
         :param int blockData:
             The block data value, defaults to ``0``.
         """
+        x1, y1, z1 = pos1
+        x2, y2, z2 = pos2
         self.drawVertices(self.getLine(x1, y1, z1, x2, y2, z2), blockType, blockData)
 
     def drawSphere(self, x1, y1, z1, radius, blockType, blockData=0):
@@ -227,7 +217,7 @@ class MinecraftDrawing:
                     if x ** 2 + y ** 2 + z ** 2 < radius ** 2:
                         self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
 
-    def drawHollowSphere(self, x1, y1, z1, radius, blockType, blockData=0):
+    def drawHollowSphere(self, center, radius, blockType, blockData=0):
         """
         draws a hollow sphere around a point to a radius, sphere has to big enough to be hollow!
 
@@ -249,6 +239,8 @@ class MinecraftDrawing:
         :param int blockData:
             The block data value, defaults to ``0``.
         """
+        x1, y1, z1 = center
+
         for x in range(radius * -1, radius):
             for y in range(radius * -1, radius):
                 for z in range(radius * -1, radius):
@@ -256,10 +248,11 @@ class MinecraftDrawing:
                             x ** 2 + y ** 2 + z ** 2 > (radius ** 2 - (radius * 2))):
                         self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
 
-    def drawTopHollowSphere(self, x1, y1, z1, radius, blockType, blockData=0):
+    def drawTopHollowSphere(self, center, radius, blockType, blockData=0):
         """
      .
         """
+        x1, y1, z1 = center
         for x in range(radius * -1, radius):
             for y in range(0, radius):
                 for z in range(radius * -1, radius):
@@ -267,10 +260,11 @@ class MinecraftDrawing:
                             x ** 2 + y ** 2 + z ** 2 > (radius ** 2 - (radius * 2))):
                         self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
 
-    def drawBottomHollowSphere(self, x1, y1, z1, radius, blockType, blockData=0):
+    def drawBottomHollowSphere(self, center, radius, blockType, blockData=0):
         """
      .
         """
+        x1, y1, z1 = center
         for x in range(radius * -1, radius):
             for y in range(radius * -1, 0):
                 for z in range(radius * -1, radius):
@@ -278,7 +272,7 @@ class MinecraftDrawing:
                             x ** 2 + y ** 2 + z ** 2 > (radius ** 2 - (radius * 2))):
                         self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
 
-    def drawCircleX(self, x, y0, z0, radius, blockType, blockData=0):
+    def drawCircleX(self, center, radius, blockType, blockData=0):
         """
         draws a circle in the Y plane (i.e. vertically)
 
@@ -300,7 +294,7 @@ class MinecraftDrawing:
         :param int blockData:
             The block data value, defaults to ``0``.
         """
-
+        x, y0, z0 = center
         f = 1 - radius
         ddf_z = 1
         ddf_y = -2 * radius
@@ -328,7 +322,7 @@ class MinecraftDrawing:
             self.drawPoint3d(x, y0 - z, z0 + y, blockType, blockData)
             self.drawPoint3d(x, y0 - z, z0 - y, blockType, blockData)
 
-    def drawCircleY(self, x0, y, z0, radius, blockType, blockData=0):
+    def drawCircleY(self, center, radius, blockType, blockData=0):
         """
         draws a circle in the X plane (i.e. horizontally)
 
@@ -350,7 +344,7 @@ class MinecraftDrawing:
         :param int blockData:
             The block data value, defaults to ``0``.
         """
-
+        x0, y, z0 = center
         f = 1 - radius
         ddf_x = 1
         ddf_z = -2 * radius
@@ -378,7 +372,7 @@ class MinecraftDrawing:
             self.drawPoint3d(x0 + z, y, z0 - x, blockType, blockData)
             self.drawPoint3d(x0 - z, y, z0 - x, blockType, blockData)
 
-    def drawCircleZ(self, x0, y0, z, radius, blockType, blockData=0):
+    def drawCircleZ(self, center, radius, blockType, blockData=0):
         """
         draws a circle in the Y plane (i.e. vertically)
 
@@ -400,6 +394,8 @@ class MinecraftDrawing:
         :param int blockData:
             The block data value, defaults to ``0``.
         """
+
+        x0, y0, z = center
 
         f = 1 - radius
         ddf_x = 1
@@ -428,26 +424,30 @@ class MinecraftDrawing:
             self.drawPoint3d(x0 + y, y0 - x, z, blockType, blockData)
             self.drawPoint3d(x0 - y, y0 - x, z, blockType, blockData)
 
-    def drawFullCircleX(self, x1, y1, z1, radius, blockType, blockData=0):
+    def drawFullCircleX(self, center, radius, blockType, blockData=0):
+        x1, y1, z1 = center
         for y in range(radius * -1, radius):
             for z in range(radius * -1, radius):
                 if y ** 2 + z ** 2 < radius ** 2:
                     self.drawPoint3d(x1, y1 + y, z1 + z, blockType, blockData)
 
-    def drawFullCircleY(self, x1, y1, z1, radius, blockType, blockData=0):
+    def drawFullCircleY(self, center, radius, blockType, blockData=0):
+        x1, y1, z1 = center
         for x in range(radius * -1, radius):
             for z in range(radius * -1, radius):
                 if x ** 2 + z ** 2 < radius ** 2:
                     self.drawPoint3d(x1 + x, y1, z1 + z, blockType, blockData)
 
-    def drawFullCircleZ(self, x1, y1, z1, radius, blockType, blockData=0):
+    def drawFullCircleZ(self, center, radius, blockType, blockData=0):
+        x1, y1, z1 = center
         for x in range(radius * -1, radius):
             for y in range(radius * -1, radius):
                 if x ** 2 + y ** 2 < radius ** 2:
                     self.drawPoint3d(x1 + x, y1 + y, z1, blockType, blockData)
 
-    def getCircleX(self, x, y0, z0, radius):
+    def getCircleX(self, center, radius):
         # add sorting
+        x, y0, z0 = center
         points = []
         f = 1 - radius
         ddf_z = 1
@@ -477,8 +477,9 @@ class MinecraftDrawing:
             points.append((x, y0 - z, z0 - y))
         return points
 
-    def getCircleY(self, x0, y, z0, radius):
+    def getCircleY(self, center, radius):
         # add sorting
+        x0, y, z0 = center
         points = []
         f = 1 - radius
         ddf_x = 1
@@ -508,8 +509,9 @@ class MinecraftDrawing:
             points.append((x0 - z, y, z0 - x))
         return points
 
-    def getCircleZ(self, x0, y0, z, radius):
+    def getCircleZ(self, center, radius):
         # add sorting
+        x0, y0, z = center
         points = []
         f = 1 - radius
         ddf_x = 1
@@ -539,7 +541,9 @@ class MinecraftDrawing:
             points.append((x0 - y, y0 - x, z))
         return points
 
-    def findPointOnCircleX(self, cx, cy, cz, radius, angle):
+    def findPointOnCircleX(self, center, radius, angle):
+
+        cx, cy, cz = center
         y = cy + math.cos(math.radians(angle)) * radius
         z = cz + math.sin(math.radians(angle)) * radius
         print(cz, z)
@@ -548,7 +552,9 @@ class MinecraftDrawing:
 
         return (cx, y, z)
 
-    def findPointOnCircleY(self, cx, cy, cz, radius, angle):
+    def findPointOnCircleY(self, center, radius, angle):
+        cx, cy, cz = center
+
         x = cx + math.sin(math.radians(angle)) * radius
         z = cz + math.cos(math.radians(angle)) * radius
         x = int(round(x, 0))
@@ -556,7 +562,9 @@ class MinecraftDrawing:
 
         return (x, cy, z)
 
-    def findPointOnCircleZ(self, cx, cy, cz, radius, angle):
+    def findPointOnCircleZ(self, center, radius, angle):
+
+        cx, cy, cz = center
         x = cx + math.sin(math.radians(angle)) * radius
         y = cy + math.cos(math.radians(angle)) * radius
         x = int(round(x, 0))
@@ -1307,8 +1315,9 @@ class MinecraftTurtle:
         self._penblock = block.Block(block.WOOL.id, 15)
         # flying to true
         self.flying = True
-        # set speed
+        #sailplane to false
         self.sailplane = False
+        # set speed
         self.turtlespeed = 6
         # create turtle
         self.showturtle = True
@@ -1399,7 +1408,7 @@ class MinecraftTurtle:
         if self.showturtle:
             self._drawTurtle(targetX, targetY, targetZ)
 
-    def right(self, angle):
+    def turnRight(self, angle):
         """
         rotate the turtle right
 
@@ -1411,7 +1420,9 @@ class MinecraftTurtle:
         if self.heading > 360:
             self.heading = self.heading - 360
 
-    def left(self, angle):
+
+
+    def turnLeft(self, angle):
         """
         rotate the turtle left
 
@@ -1423,7 +1434,7 @@ class MinecraftTurtle:
         if self.heading < 0:
             self.heading = self.heading + 360
 
-    def up(self, angle):
+    def turnUp(self, angle):
         """
         rotate the turtle up
 
@@ -1438,7 +1449,7 @@ class MinecraftTurtle:
         if not self.flying:
             self.flying = True
 
-    def down(self, angle):
+    def turnDown(self, angle):
         """
         rotate the turtle down
 
@@ -1452,6 +1463,18 @@ class MinecraftTurtle:
         # turn flying on
         if not self.flying:
             self.flying = True
+
+    def up(self, distance = 1):
+        self.position.x += distance
+
+    def down(self, distance = 1):
+        self.position.x -= distance
+
+    def left(self, distance=1):
+        print("In developing...")
+
+    def right(self, distance=1):
+        print("In developing...")
 
     def setx(self, x):
         """

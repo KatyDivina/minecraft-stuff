@@ -12,16 +12,16 @@ steve = MinecraftTurtle(mc, pos)
 # tests
 # draw a pentagon at different speeds
 steve.forward(5)
-steve.right(72)
+steve.turnRight(72)
 steve.speed(8)
 steve.forward(5)
-steve.right(72)
+steve.turnRight(72)
 steve.speed(10)
 steve.forward(5)
-steve.right(72)
+steve.turnRight(72)
 steve.speed(0)
 steve.forward(5)
-steve.right(72)
+steve.turnRight(72)
 steve.forward(5)
 
 # change pen
@@ -43,12 +43,12 @@ steve.pendown()
 steve.penblock(block.WOOL.id, 2)
 
 # up, down, left
-steve.up(30)
+steve.turnUp(30)
 steve.forward(5)
-steve.right(72)
+steve.turnRight(72)
 steve.forward(5)
-steve.down(30)
-steve.left(72)
+steve.turnDown(30)
+steve.turnLeft(72)
 steve.forward(5)
 
 # change pen
