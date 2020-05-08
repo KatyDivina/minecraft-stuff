@@ -278,17 +278,6 @@ class MinecraftDrawing:
                             x ** 2 + y ** 2 + z ** 2 > (radius ** 2 - (radius * 2))):
                         self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
 
-    def drawTopHollowSphere(self, x1, y1, z1, radius, blockType, blockData=0):
-        """
-     .
-        """
-        for x in range(radius * -1, radius):
-            for y in range(0, radius):
-                for z in range(radius * -1, radius):
-                    if (x ** 2 + y ** 2 + z ** 2 < radius ** 2) and (
-                            x ** 2 + y ** 2 + z ** 2 > (radius ** 2 - (radius * 2))):
-                        self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
-
     def drawCircleX(self, x, y0, z0, radius, blockType, blockData=0):
         """
         draws a circle in the Y plane (i.e. vertically)
@@ -439,6 +428,24 @@ class MinecraftDrawing:
             self.drawPoint3d(x0 + y, y0 - x, z, blockType, blockData)
             self.drawPoint3d(x0 - y, y0 - x, z, blockType, blockData)
 
+    def drawFullCircleX(self, x1, y1, z1, radius, blockType, blockData=0):
+        for y in range(radius * -1, radius):
+            for z in range(radius * -1, radius):
+                if y ** 2 + z ** 2 < radius ** 2:
+                    self.drawPoint3d(x1, y1 + y, z1 + z, blockType, blockData)
+
+    def drawFullCircleY(self, x1, y1, z1, radius, blockType, blockData=0):
+        for x in range(radius * -1, radius):
+            for z in range(radius * -1, radius):
+                if x ** 2 + z ** 2 < radius ** 2:
+                    self.drawPoint3d(x1 + x, y1, z1 + z, blockType, blockData)
+
+    def drawFullCircleZ(self, x1, y1, z1, radius, blockType, blockData=0):
+        for x in range(radius * -1, radius):
+            for y in range(radius * -1, radius):
+                if x ** 2 + y ** 2 < radius ** 2:
+                    self.drawPoint3d(x1 + x, y1 + y, z1, blockType, blockData)
+
     def getCircleX(self, x, y0, z0, radius):
         # add sorting
         points = []
@@ -531,6 +538,31 @@ class MinecraftDrawing:
             points.append((x0 + y, y0 - x, z))
             points.append((x0 - y, y0 - x, z))
         return points
+
+    def findPointOnCircleX(self, cx, cy, cz, radius, angle):
+        y = cy + math.cos(math.radians(angle)) * radius
+        z = cz + math.sin(math.radians(angle)) * radius
+        print(cz, z)
+        y = int(round(y, 0))
+        z = int(round(z, 0))
+
+        return (cx, y, z)
+
+    def findPointOnCircleY(self, cx, cy, cz, radius, angle):
+        x = cx + math.sin(math.radians(angle)) * radius
+        z = cz + math.cos(math.radians(angle)) * radius
+        x = int(round(x, 0))
+        z = int(round(z, 0))
+
+        return (x, cy, z)
+
+    def findPointOnCircleZ(self, cx, cy, cz, radius, angle):
+        x = cx + math.sin(math.radians(angle)) * radius
+        y = cy + math.cos(math.radians(angle)) * radius
+        x = int(round(x, 0))
+        y = int(round(y, 0))
+
+        return (x, y, cz)
 
     def drawCircle(self, x0, y0, z, radius, blockType, blockData=0):
         """
@@ -1242,7 +1274,7 @@ class ShapeBlock():
             return False
         else:
             return (self.actualPos.x, self.actualPos.y, self.actualPos.z, self.blockType, self.blockData) == (
-            other.actualPos.x, other.actualPos.y, other.actualPos.z, other.blockType, other.blockData)
+                other.actualPos.x, other.actualPos.y, other.actualPos.z, other.blockType, other.blockData)
 
 
 class MinecraftTurtle:
@@ -1595,30 +1627,6 @@ class MinecraftTurtle:
     def _roundVec3(position):
         return minecraft.vec3(int(position.x), int(position.y), int(position.z))
 
-    def findPointOnCircleX(self, cx, cy, cz, radius, angle):
-        y = cy + math.cos(math.radians(angle)) * radius
-        z = cx + math.sin(math.radians(angle)) * radius
-        y = int(round(y, 0))
-        z = int(round(x, 0))
-
-        return (cx, y, z)
-
-    def findPointOnCircleY(self, cx, cy, cz, radius, angle):
-        x = cx + math.sin(math.radians(angle)) * radius
-        z = cy + math.cos(math.radians(angle)) * radius
-        x = int(round(x, 0))
-        z = int(round(y, 0))
-
-        return (x, cy, z)
-
-    def findPointOnCircleZ(self, cx, cy, cz, radius, angle):
-        x = cx + math.sin(math.radians(angle)) * radius
-        y = cy + math.cos(math.radians(angle)) * radius
-        x = int(round(x, 0))
-        y = int(round(y, 0))
-
-        return (x, y, cz)
-
 
 if __name__ == "__main__":
     mc = minecraft.Minecraft.create()
@@ -1641,35 +1649,40 @@ if __name__ == "__main__":
 
     ##getCircle
     # gx = md.getCircleX(x, y, z+20, radius)
-    # for px, py, pz in gx:
-    #    mc.setBlock(px, py, pz, blockType)
+    # md.drawVertices(gx, blockType, blockData)
 
     # gy = md.getCircleY(x, y, z + 20, radius)
-    # for px, py, pz in gy:
-    #    mc.setBlock(px, py, pz, blockType)
+    # md.drawVertices(gy, blockType, blockData)
 
     # gz = md.getCircleZ(x, y, z + 20, radius)
-    # for px, py, pz in gz:
-    #    mc.setBlock(px, py, pz, blockType)
+    # md.drawVertices(gz, blockType, blockData)
 
-    gary = MinecraftTurtle(mc)
-    gary.setposition(x, y, z)
-
-    mc.postToChat("fly")
-    gary.fly()
-    gary.forward(10)
-
-    mc.postToChat("walk")
-    gary.walk()
-    gary.forward(10)
-
-    mc.postToChat("plane")
-    gary.plane()
-    gary.forward(10)
-
-    mc.postToChat("fly")
-    gary.fly()
-    gary.forward(10)
-
+    # gary = MinecraftTurtle(mc)
+    # gary.setposition(x, y, z)
+    #
+    # mc.postToChat("fly")
+    # gary.fly()
+    # gary.forward(10)
+    #
+    # mc.postToChat("walk")
+    # gary.walk()
+    # gary.forward(10)
+    #
+    # mc.postToChat("plane")
+    # gary.plane()
+    # gary.forward(10)
+    #
+    # mc.postToChat("fly")
+    # gary.fly()
+    # gary.forward(10)
 
     ###findpointoncircle
+
+    # md.drawFullCircleX(x, y, z, radius, blockType, blockData)
+    # md.drawFullCircleY(x, y, z, radius, blockType, blockData+1)
+    # md.drawFullCircleZ(x, y, z, radius, blockType, blockData+1)
+
+    # for a in range(360):
+    #     px, py, pz = md.findPointOnCircleZ(x, y, z, radius, a)
+    #     print(px, py, pz)
+    #     mc.setBlock(px, py, pz, blockType, blockData)
