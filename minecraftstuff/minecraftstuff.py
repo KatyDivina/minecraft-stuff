@@ -1462,6 +1462,7 @@ class MinecraftTurtle:
     def left(self, distance=1):
         print("In developing...")
 
+
     def right(self, distance=1):
         print("In developing...")
 
