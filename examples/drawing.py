@@ -27,7 +27,7 @@ faceVertices = []
 faceVertices.append(minecraft.Vec3(0,0,0))
 faceVertices.append(minecraft.Vec3(5,10,0))
 faceVertices.append(minecraft.Vec3(10,0,0))
-mcDrawing.drawFace(faceVertices, True, block.SNOW_BLOCK.id)
+mcDrawing.drawPolygon(faceVertices, True, block.SNOW_BLOCK.id)
 
 #face - wireframe square - using Points
 faceVertices = Points()
@@ -35,7 +35,7 @@ faceVertices.add(0,0,5)
 faceVertices.add(10,0,5)
 faceVertices.add(10,10,5)
 faceVertices.add(0,10,5)
-mcDrawing.drawFace(faceVertices, False, block.DIAMOND_BLOCK.id)
+mcDrawing.drawPolygon(faceVertices, False, block.DIAMOND_BLOCK.id)
 
 #face - 5 sided shape
 faceVertices = []
@@ -44,4 +44,4 @@ faceVertices.append(minecraft.Vec3(5,15,5))
 faceVertices.append(minecraft.Vec3(3,15,10))
 faceVertices.append(minecraft.Vec3(-3,15,10))
 faceVertices.append(minecraft.Vec3(-5,15,5))
-mcDrawing.drawFace(faceVertices, True, block.GOLD_BLOCK.id)
+mcDrawing.drawPolygon(faceVertices, True, block.GOLD_BLOCK.id)

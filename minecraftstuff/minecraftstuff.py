@@ -15,7 +15,7 @@ import time
 import math
 
 
-class Points():
+class Points:
     """
     Points - a collection of minecraft positions or Vec3's. Used when drawing faces ``MinecraftDrawing.drawFace()``.
     """
@@ -79,9 +79,9 @@ class MinecraftDrawing:
         self.mc.setBlock(x, y, z, blockType, blockData)
         # print "x = " + str(x) + ", y = " + str(y) + ", z = " + str(z)
 
-    def drawFace(self, vertices, filled, blockType, blockData=0):
+    def drawPolygon(self, vertices, filled, blockType, blockData=0):
         """
-        draws a face, when passed a collection of vertices which make up a polyhedron
+        draws a polygon, when passed a collection of vertices which make up a polyhedron
 
         :param list vertices:
             The a list of points, passed as either a ``minecraftstuff.Points`` object 
@@ -111,14 +111,14 @@ class MinecraftDrawing:
         # loop through vertices and get edges
         for vertex in vertices[1:]:
             # get the points for the edge
-            edgesVertices = edgesVertices + self.getLine(lastVertex.x, lastVertex.y, lastVertex.z, vertex.x, vertex.y,
-                                                         vertex.z)
+            edgesVertices = edgesVertices + self.getLine((lastVertex.x, lastVertex.y, lastVertex.z), (vertex.x, vertex.y,
+                                                         vertex.z))
             # persist the last vertex found    
             lastVertex = vertex
 
         # get edge between the last and first vertices, so the polyhedron 'joins up'
-        edgesVertices = edgesVertices + self.getLine(lastVertex.x, lastVertex.y, lastVertex.z, firstVertex.x,
-                                                     firstVertex.y, firstVertex.z)
+        edgesVertices = edgesVertices + self.getLine((lastVertex.x, lastVertex.y, lastVertex.z), (firstVertex.x,
+                                                     firstVertex.y, firstVertex.z))
 
         if (filled):
             # draw solid face
@@ -187,9 +187,9 @@ class MinecraftDrawing:
         """
         x1, y1, z1 = pos1
         x2, y2, z2 = pos2
-        self.drawVertices(self.getLine(x1, y1, z1, x2, y2, z2), blockType, blockData)
+        self.drawVertices(self.getLine((x1, y1, z1), (x2, y2, z2)), blockType, blockData)
 
-    def drawSphere(self, x1, y1, z1, radius, blockType, blockData=0):
+    def drawFullSphere(self, x1, y1, z1, radius, blockType, blockData=0):
         """
         draws a sphere around a point to a radius
 
@@ -217,7 +217,7 @@ class MinecraftDrawing:
                     if x ** 2 + y ** 2 + z ** 2 < radius ** 2:
                         self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
 
-    def drawHollowSphere(self, center, radius, blockType, blockData=0):
+    def drawSphere(self, center, radius, blockType, blockData=0):
         """
         draws a hollow sphere around a point to a radius, sphere has to big enough to be hollow!
 
@@ -248,7 +248,7 @@ class MinecraftDrawing:
                             x ** 2 + y ** 2 + z ** 2 > (radius ** 2 - (radius * 2))):
                         self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
 
-    def drawTopHollowSphere(self, center, radius, blockType, blockData=0):
+    def drawTopSphere(self, center, radius, blockType, blockData=0):
         """
      .
         """
@@ -260,7 +260,7 @@ class MinecraftDrawing:
                             x ** 2 + y ** 2 + z ** 2 > (radius ** 2 - (radius * 2))):
                         self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
 
-    def drawBottomHollowSphere(self, center, radius, blockType, blockData=0):
+    def drawBottomSphere(self, center, radius, blockType, blockData=0):
         """
      .
         """
@@ -672,31 +672,20 @@ class MinecraftDrawing:
             self.drawPoint3d(x0 + z, y, z0 - x, blockType, blockData)
             self.drawPoint3d(x0 - z, y, z0 - x, blockType, blockData)
 
-    def getLine(self, x1, y1, z1, x2, y2, z2):
+    def getLine(self, pos1, pos2):
         """
         Returns all the points which would make up a line between 2 points as a list
 
         3d implementation of bresenham line algorithm
 
-        :param int x1:
-            The x position of the first point.
+        :param tuple pos1:
+            The first point.
 
-        :param int y1:
-            The y position of the first point.
-
-        :param int z1:
-            The z position of the first point.
-
-        :param int x2:
-            The x position of the second point.
-
-        :param int y2:
-            The y position of the second point.
-
-        :param int z2:
-            The z position of the second point.
+        :param tuple pos2:
+            The second point.
         """
-
+        x1, y1, z1 = pos1
+        x2, y2, z2 = pos2
         # return the maximum of 2 values
         def MAX(a, b):
             if a > b:
@@ -1380,7 +1369,7 @@ class MinecraftTurtle:
                 self.mcDrawing.drawLine(currentX, currentY - 1, currentZ, targetX, targetY - 1, targetZ,
                                         self._penblock.id, self._penblock.data)
         else:
-            blocksBetween = self.mcDrawing.getLine(currentX, currentY, currentZ, targetX, targetY, targetZ)
+            blocksBetween = self.mcDrawing.getLine((currentX, currentY, currentZ), (targetX, targetY, targetZ))
             for blockBetween in blocksBetween:
                 # print blockBetween
                 # if walking update the y, to be the height of the world
@@ -1651,61 +1640,4 @@ class MinecraftTurtle:
         return minecraft.vec3(int(position.x), int(position.y), int(position.z))
 
 
-if __name__ == "__main__":
-    mc = minecraft.Minecraft.create()
-    md = MinecraftDrawing(mc)
-    mc.postToChat("Testings")
-    radius = 10
-    blockType = 35
-    blockData = 14
 
-    x, y, z = mc.player.getTilePos()
-
-    ###Draw circle X, Y, Z
-    # md.drawCircleX(x + 10, y, z, radius, blockType, blockData-2)
-    # md.drawCircleY(x + 10, y, z, radius, blockType, blockData)
-    # md.drawCircleZ(x + 10, y, z, radius, blockType, blockData+1)
-
-    ##Top, bottom sphere
-    # md.drawBottomHollowSphere(x+3*radius, y-3, z, radius, 35, 5)
-    # md.drawTopHollowSphere(x+3*radius, y, z, radius, 35,6)
-
-    ##getCircle
-    # gx = md.getCircleX(x, y, z+20, radius)
-    # md.drawVertices(gx, blockType, blockData)
-
-    # gy = md.getCircleY(x, y, z + 20, radius)
-    # md.drawVertices(gy, blockType, blockData)
-
-    # gz = md.getCircleZ(x, y, z + 20, radius)
-    # md.drawVertices(gz, blockType, blockData)
-
-    # gary = MinecraftTurtle(mc)
-    # gary.setposition(x, y, z)
-    #
-    # mc.postToChat("fly")
-    # gary.fly()
-    # gary.forward(10)
-    #
-    # mc.postToChat("walk")
-    # gary.walk()
-    # gary.forward(10)
-    #
-    # mc.postToChat("plane")
-    # gary.plane()
-    # gary.forward(10)
-    #
-    # mc.postToChat("fly")
-    # gary.fly()
-    # gary.forward(10)
-
-    ###findpointoncircle
-
-    # md.drawFullCircleX(x, y, z, radius, blockType, blockData)
-    # md.drawFullCircleY(x, y, z, radius, blockType, blockData+1)
-    # md.drawFullCircleZ(x, y, z, radius, blockType, blockData+1)
-
-    # for a in range(360):
-    #     px, py, pz = md.findPointOnCircleZ(x, y, z, radius, a)
-    #     print(px, py, pz)
-    #     mc.setBlock(px, py, pz, blockType, blockData)
