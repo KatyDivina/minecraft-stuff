@@ -185,7 +185,6 @@ class MinecraftDrawing:
             The block data value, defaults to ``0``.
         """
         self.drawVertices(self.getLine(x1, y1, z1, x2, y2, z2), blockType, blockData)
-
     
     def drawSphere(self, x1, y1, z1, radius, blockType, blockData=0):
         """
@@ -461,6 +460,50 @@ class MinecraftDrawing:
                     yd += ay
                     
         return vertices
+
+class MinecraftDrawingPlus(MinecraftDrawing):
+
+    def __init__(self, mc):
+        super().__init__(mc)
+        self.mc = mc
+
+    #Just renamed. Russian children think the function draws a human face :-)
+    def drawPolygon(self, points, filled, blockType, blockData=0):
+        """
+        draws a polygon, when passed a collection of points which make up a polyhedron
+
+        :param list vertices:
+            The a list of points, passed as either a ``minecraftstuff.Points`` object
+            or as a list of ``mcpi.minecraft.Vec3`` objects.
+
+        :param boolean filled:
+            If ``True`` fills the face with blocks.
+
+        :param int blockType:
+            The block id.
+
+        :param int blockData:
+            The block data value, defaults to ``0``.
+        """
+        self.drawFace(points, filled, blockType, blockData)
+
+    #center as one variable. Can write as (x1, y1, z1) or "pos" ik
+    def drawSphere(self, centerPos, radius, blockType, blockData=0):
+        x1,y1,z1 = centerPos
+        self.drawSphere(x1, y1, z1, radius, blockType, blockData)
+
+
+    #center as one variable. Can write as (x1, y1, z1) or "pos"
+    def drawHollowSphere(self, centerPos, radius, blockType, blockData=0):
+        x1, y1, z1 = centerPos
+        self.drawHollowSphere(x1, y1, z1, radius, blockType, blockData)
+
+    #def drawHollowCircle
+
+
+
+
+
 
 # MinecraftShape - a class for managing shapes
 class MinecraftShape:
@@ -981,6 +1024,10 @@ class MinecraftTurtle:
         self.turtleblock = block.Block(block.DIAMOND_BLOCK.id)
         # draw turtle
         self._drawTurtle(int(self.position.x), int(self.position.y), int(self.position.y))
+    def turtleBlock(self, block):
+        self.turtleblock = block
+
+
 
     def forward(self, distance):
         """
@@ -1051,7 +1098,7 @@ class MinecraftTurtle:
         if self.showturtle:
             self._drawTurtle(targetX, targetY, targetZ)
 
-    def right(self, angle):
+    def turnRight(self, angle):
         """
         rotate the turtle right
 
@@ -1063,7 +1110,7 @@ class MinecraftTurtle:
         if self.heading > 360:
             self.heading = self.heading - 360
 
-    def left(self, angle):
+    def turnLeft(self, angle):
         """
         rotate the turtle left
 
@@ -1075,7 +1122,7 @@ class MinecraftTurtle:
         if self.heading < 0:
             self.heading = self.heading + 360
 
-    def up(self, angle):
+    def turnUp(self, angle):
         """
         rotate the turtle up
 
@@ -1090,7 +1137,7 @@ class MinecraftTurtle:
         if not self.flying:
             self.flying = True
 
-    def down(self, angle):
+    def turnDown(self, angle):
         """
         rotate the turtle down
 
@@ -1132,7 +1179,7 @@ class MinecraftTurtle:
         """
         self.setposition(self.position.x, self.position.y, z)
 
-    def setposition(self, x, y, z):
+    def setPosition(self, x, y, z):
         """
         set the turtle's position
 
@@ -1155,6 +1202,8 @@ class MinecraftTurtle:
         # draw the turtle
         if self.showturtle:
             self._drawTurtle(self.position.x, self.position.y, self.position.z)
+    def getPosition(self):
+        return self.position
 
     def setheading(self, angle):
         """
