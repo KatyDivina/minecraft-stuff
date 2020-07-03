@@ -33,5 +33,6 @@ coverage
 docs/_build
 
 /.idea
+minecraftstuff/.idea
 
 TestNewFich.py
