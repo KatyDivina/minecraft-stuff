@@ -152,6 +152,9 @@ class MinecraftDrawing:
             # draw wireframe
             self.drawVertices(edgesVertices, blockType, blockData)
 
+    def drawPolygon(self, points, filled, blockType, blockData=0):
+        self.drawFace(points, filled, blockType, blockData)
+
     def drawVertices(self, vertices, blockType, blockData=0):
         """
         draws all the points in a collection of vertices with a block
@@ -356,6 +359,177 @@ class MinecraftDrawing:
             self.drawPoint3d(x0 + z, y, z0 - x, blockType, blockData)
             self.drawPoint3d(x0 - z, y, z0 - x, blockType, blockData)
 
+    def drawCircleX(self, centerPos, radius, blockType, blockData=0):
+        x, y0, z0 = centerPos
+        for dy in range(y0 - radius, y0 + radius):
+            for dz in range(z0 - radius, z0 + radius):
+                if dy ** 2 + dz ** 2 <= radius ** 2:
+                    self.drawPoint3d(x, y0 + dy, z0 + dz, blockType, blockData)
+
+    def drawCircleY(self, centerPos, radius, blockType, blockData=0):
+        x0, y, z0 = centerPos
+        for dx in range(x0 - radius, x0 + radius):
+            for dz in range(z0 - radius, z0 + radius):
+                if dx ** 2 + dz ** 2 <= radius ** 2:
+                    self.drawPoint3d(x0 + dx, y, z0 + dz, blockType, blockData)
+
+    def drawCircleZ(self, centerPos, radius, blockType, blockData=0):
+        x0, y0, z = centerPos
+        for dx in range(x0 - radius, x0 + radius):
+            for dy in range(y0 - radius, y0 + radius):
+                if dx ** 2 + dy ** 2 <= radius ** 2:
+                    self.drawPoint3d(x0 + dx, y0 + dy, z, blockType, blockData)
+
+    def drawHollowCircleX(self, x, y0, z0, radius, blockType, blockData=0):
+        """
+        draws a circle in the Y plane (i.e. vertically)
+
+        :param int x0:
+            The x position of the centre of the circle.
+
+        :param int y0:
+            The y position of the centre of the circle.
+
+        :param int z:
+            The z position of the centre of the circle.
+
+        :param int radius:
+            The radius of the sphere.
+
+        :param int blockType:
+            The block id.
+
+        :param int blockData:
+            The block data value, defaults to ``0``.
+        """
+
+        f = 1 - radius
+        ddf_z = 1
+        ddf_y = -2 * radius
+        z = 0
+        y = radius
+        self.drawPoint3d(x, y0 + radius, z0, blockType, blockData)
+        self.drawPoint3d(x, y0 - radius, z0, blockType, blockData)
+        self.drawPoint3d(x, y0, z0 + radius, blockType, blockData)
+        self.drawPoint3d(x, y0, z0 - radius, blockType, blockData)
+
+        while z < y:
+            if f >= 0:
+                y -= 1
+                ddf_y += 2
+                f += ddf_y
+            z += 1
+            ddf_z += 2
+            f += ddf_z
+            self.drawPoint3d(x, y0 + y, z0 + z, blockType, blockData)
+            self.drawPoint3d(x, y0 + y, z0 - z, blockType, blockData)
+            self.drawPoint3d(x, y0 - y, z0 + z, blockType, blockData)
+            self.drawPoint3d(x, y0 - y, z0 - z, blockType, blockData)
+            self.drawPoint3d(x, y0 + z, z0 + y, blockType, blockData)
+            self.drawPoint3d(x, y0 + z, z0 - y, blockType, blockData)
+            self.drawPoint3d(x, y0 - z, z0 + y, blockType, blockData)
+            self.drawPoint3d(x, y0 - z, z0 - y, blockType, blockData)
+
+    def drawHollowCircleY(self, x0, y, z0, radius, blockType, blockData=0):
+        """
+        draws a circle in the X plane (i.e. horizontally)
+
+        :param int x0:
+            The x position of the centre of the circle.
+
+        :param int y:
+            The y position of the centre of the circle.
+
+        :param int z0:
+            The z position of the centre of the circle.
+
+        :param int radius:
+            The radius of the circle.
+
+        :param int blockType:
+            The block id.
+
+        :param int blockData:
+            The block data value, defaults to ``0``.
+        """
+
+        f = 1 - radius
+        ddf_x = 1
+        ddf_z = -2 * radius
+        x = 0
+        z = radius
+        self.drawPoint3d(x0, y, z0 + radius, blockType, blockData)
+        self.drawPoint3d(x0, y, z0 - radius, blockType, blockData)
+        self.drawPoint3d(x0 + radius, y, z0, blockType, blockData)
+        self.drawPoint3d(x0 - radius, y, z0, blockType, blockData)
+
+        while x < z:
+            if f >= 0:
+                z -= 1
+                ddf_z += 2
+                f += ddf_z
+            x += 1
+            ddf_x += 2
+            f += ddf_x
+            self.drawPoint3d(x0 + x, y, z0 + z, blockType, blockData)
+            self.drawPoint3d(x0 - x, y, z0 + z, blockType, blockData)
+            self.drawPoint3d(x0 + x, y, z0 - z, blockType, blockData)
+            self.drawPoint3d(x0 - x, y, z0 - z, blockType, blockData)
+            self.drawPoint3d(x0 + z, y, z0 + x, blockType, blockData)
+            self.drawPoint3d(x0 - z, y, z0 + x, blockType, blockData)
+            self.drawPoint3d(x0 + z, y, z0 - x, blockType, blockData)
+            self.drawPoint3d(x0 - z, y, z0 - x, blockType, blockData)
+
+    def drawHollowCircleZ(self, x0, y0, z, radius, blockType, blockData=0):
+        """
+        draws a circle in the Y plane (i.e. vertically)
+
+        :param int x0:
+            The x position of the centre of the circle.
+
+        :param int y0:
+            The y position of the centre of the circle.
+
+        :param int z:
+            The z position of the centre of the circle.
+
+        :param int radius:
+            The radius of the sphere.
+
+        :param int blockType:
+            The block id.
+
+        :param int blockData:
+            The block data value, defaults to ``0``.
+        """
+
+        f = 1 - radius
+        ddf_x = 1
+        ddf_y = -2 * radius
+        x = 0
+        y = radius
+        self.drawPoint3d(x0, y0 + radius, z, blockType, blockData)
+        self.drawPoint3d(x0, y0 - radius, z, blockType, blockData)
+        self.drawPoint3d(x0 + radius, y0, z, blockType, blockData)
+        self.drawPoint3d(x0 - radius, y0, z, blockType, blockData)
+
+        while x < y:
+            if f >= 0:
+                y -= 1
+                ddf_y += 2
+                f += ddf_y
+            x += 1
+            ddf_x += 2
+            f += ddf_x
+            self.drawPoint3d(x0 + x, y0 + y, z, blockType, blockData)
+            self.drawPoint3d(x0 - x, y0 + y, z, blockType, blockData)
+            self.drawPoint3d(x0 + x, y0 - y, z, blockType, blockData)
+            self.drawPoint3d(x0 - x, y0 - y, z, blockType, blockData)
+            self.drawPoint3d(x0 + y, y0 + x, z, blockType, blockData)
+            self.drawPoint3d(x0 - y, y0 + x, z, blockType, blockData)
+            self.drawPoint3d(x0 + y, y0 - x, z, blockType, blockData)
+            self.drawPoint3d(x0 - y, y0 - x, z, blockType, blockData)
+
     def getLine(self, x1, y1, z1, x2, y2, z2):
         """
         Returns all the points which would make up a line between 2 points as a list
@@ -479,6 +653,8 @@ class MinecraftDrawing:
                     yd += ay
 
         return vertices
+
+         
 
 
 # MinecraftShape - a class for managing shapes
@@ -966,7 +1142,7 @@ class ShapeBlock():
             return False
         else:
             return (self.actualPos.x, self.actualPos.y, self.actualPos.z, self.blockType, self.blockData) == (
-            other.actualPos.x, other.actualPos.y, other.actualPos.z, other.blockType, other.blockData)
+                other.actualPos.x, other.actualPos.y, other.actualPos.z, other.blockType, other.blockData)
 
 
 class MinecraftTurtle:
@@ -999,7 +1175,7 @@ class MinecraftTurtle:
         self._penblock = block.Block(block.WOOL.id, 15)
         # flying to true
         self.flying = True
-        #hover - distance above ground
+        # hover - distance above ground
         self._hoverDistance = 1
         # set speed
         self.turtlespeed = 6
@@ -1012,10 +1188,9 @@ class MinecraftTurtle:
         # draw turtle
         self._drawTurtle(int(self.position.x), int(self.position.y), int(self.position.y))
 
-####Block settings
+    ####Block settings
     def turtleBlock(self, blockId, blockData=0):
         self._turtleblock = block.Block(blockId, blockData)
-
 
     def penBlock(self, blockId, blockData=0):
         """
@@ -1047,9 +1222,7 @@ class MinecraftTurtle:
         """
         return self.pendown
 
-
-
-#### Movement
+    #### Movement
     def forward(self, distance):
         """
         move the turtle forward
@@ -1085,7 +1258,6 @@ class MinecraftTurtle:
         # if walking, set target Y to be height of world
         if not self.flying:
             targetY = self.mc.getHeight(targetX, targetZ) + self._hoverDistance
-
 
         currentX, currentY, currentZ = int(self.position.x), int(self.position.y), int(self.position.z)
 
@@ -1186,19 +1358,19 @@ class MinecraftTurtle:
         self.position.y -= distance
 
     def left(self, distance=1):
-        x, y, z = self._findPointOnSphere(self.position.x, self.position.y, self.position.z, self.heading-90,
+        x, y, z = self._findPointOnSphere(self.position.x, self.position.y, self.position.z, self.heading - 90,
                                           self.verticalheading, distance)
 
-         # move turtle left
+        # move turtle left
         self._moveTurtle(x, y, z)
 
     def right(self, distance=1):
-        x, y, z = self._findPointOnSphere(self.position.x, self.position.y, self.position.z, self.heading+90,
+        x, y, z = self._findPointOnSphere(self.position.x, self.position.y, self.position.z, self.heading + 90,
                                           self.verticalheading, distance)
 
         if self.isDown():
             self.penUp()
-            self._moveTurtle(x, y, z)# move turtle right
+            self._moveTurtle(x, y, z)  # move turtle right
             self.penDown()
         else:
             self._moveTurtle(x, y, z)
@@ -1206,10 +1378,7 @@ class MinecraftTurtle:
     def moveTo(self, x, y, z):
         self._moveTurtle(x, y, z)
 
-
-
-
-####Set position
+    ####Set position
     def home(self):
         """
         reset the turtle's position
@@ -1272,8 +1441,7 @@ class MinecraftTurtle:
     def getPosition(self):
         return self.position
 
-
-####Heading
+    ####Heading
     def setHeading(self, angle):
         """
         set the turtle's horizontal heading
@@ -1295,15 +1463,12 @@ class MinecraftTurtle:
         if not self.flying:
             self.flying = True
 
-
-
-####State settings
+    ####State settings
     def fly(self):
         """
         sets the turtle to 'fly', i.e. not have to move along the ground.
         """
         self.flying = True
-
 
     def walk(self):
         """
@@ -1315,7 +1480,6 @@ class MinecraftTurtle:
     def hover(self, distance):
         self._hoverDistance = distance
 
-
     def speed(self, turtlespeed):
         """
         set the turtle's speed.
@@ -1325,7 +1489,6 @@ class MinecraftTurtle:
             When set to ``0`` the turtle draws instantaneously.
         """
         self.turtlespeed = turtlespeed
-
 
     def _drawTurtle(self, x, y, z):
         # draw turtle
